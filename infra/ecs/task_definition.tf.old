@@ -1,0 +1,58 @@
+resource "aws_ecs_task_definition" "fbooking-task-definition" {
+    family = "fbooking-task-definition"
+    container_definitions = jsonencode([
+        {
+        name      = "ec2-fbooking-backend"
+        image     = local.fbooking_backend_image
+        cpu       = 1
+        memory    = 512
+        essential = true
+        portMappings = [
+            {
+            containerPort = 80
+            hostPort      = 80
+            }
+        ]
+        environment = [
+            {
+                name  = "FBOOKING_DB_NAME"
+                value = "${local.FBOOKING_DB_NAME}"
+            },
+            {
+                name  = "FBOOKING_DB_USER"
+                value = "${local.FBOOKING_DB_USER}"
+            },
+            {
+                name  = "FBOOKING_DB_PASSWORD"
+                value = "${local.FBOOKING_DB_PASSWORD}"
+            },
+            {
+                name  = "DB_INSTANCE_ADDRESS"
+                value = "${local.DB_INSTANCE_ADDRESS}"
+            },
+            {
+                name  = "DB_INSTANCE_PORT"
+                value = "${local.DB_INSTANCE_PORT}"
+            },
+        ]
+
+        
+        }
+    ])
+
+
+    placement_constraints {
+        type       = "memberOf"
+        expression = "attribute:ecs.availability-zone in [us-west-2a, us-west-2b]"
+    }
+}
+
+resource "local_file" "ecs_task_definition" {
+    filename = "ecs-task-definition.json"
+    content  = aws_ecs_task_definition.fbooking-task-definition.container_definitions
+}
+
+output "task-definition" {
+    value = local_file.ecs_task_definition
+    sensitive = true
+}

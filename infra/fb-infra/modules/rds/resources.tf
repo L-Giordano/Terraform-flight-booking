@@ -1,27 +1,3 @@
-resource "aws_ssm_parameter" "db_instance_address" {
-    name  = "DB_INSTANCE_ADDRESS"
-    type  = "String"
-    value = module.db.db_instance_address
-}
-
-resource "aws_ssm_parameter" "db_instance_port" {
-    name  = "DB_INSTANCE_PORT"
-    type  = "String"
-    value = module.db.db_instance_port
-}
-
-resource "aws_ssm_parameter" "db_instance_username" {
-    name  = "DB_INSTANCE_USERNAME"
-    type  = "String"
-    value = module.db.db_instance_username
-    }
-
-resource "aws_ssm_parameter" "db_instance_password" {
-    name  = "DB_INSTANCE_PASSWORD"
-    type  = "String"
-    value = module.db.db_instance_password
-}
-
 resource "aws_security_group" "rds" {
     name_prefix = "rds-sg"
     description = "Security group for RDS"
